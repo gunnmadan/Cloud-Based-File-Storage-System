@@ -21,3 +21,13 @@ def create_app():
     app.register_blueprint(files_blueprint)
     
     return app
+
+    from .files import files as files_blueprint
+    app.register_blueprint(files_blueprint, url_prefix="/files")
+
+    from .auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint, url_prefix="/auth")
+
+    return app
+
+     

@@ -13,6 +13,8 @@ class GoogleDriveService:
 
     def _init_service(self):
         creds = Credentials.from_authorized_user_file(self.credentials_path, self.SCOPES)
+        flow = InstalledAppFlow.from_client_secrets_file(self.credentials_path, self.SCOPES)
+        creds = flow.run_local_server(port=0)
         self.service = build('drive', 'v3', credentials=creds)
 
     def upload_file(self, file_content, filename, mime_type):

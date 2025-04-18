@@ -5,12 +5,16 @@ from ..services.google_drive import GoogleDriveService
 from datetime import datetime, timedelta
 import uuid
 
+
 files = Blueprint('files', __name__)
 drive_service = GoogleDriveService('credentials.json')
 
 @files.route('/upload', methods=['POST'])
 @login_required
 def upload_file():
+
+    print("UPLOAD route HIT!")
+
     if 'file' not in request.files:
         return jsonify({'error': 'No file provided'}), 400
     
