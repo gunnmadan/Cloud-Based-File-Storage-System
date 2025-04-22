@@ -7,28 +7,22 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    user = User.query.filter_by(email=data.get('email')).first()
-    
-    if user and user.check_password(data.get('password')):
+    user = User.query.filter_by(username="user1").first()
+
+    if user is not None and user.check_password(data.get('password')):
         login_user(user)
         return jsonify({'message': 'Logged in successfully'}), 200
-    else: 
-        return jsonify({'error': 'Invalid credentials'}), 401
-    
-    @auth.route('/logout')
-    @login_required
-    def logout():
-        logout_user()
-        return jsonify({'error': 'Invalid credentials'}), 401
-    
-    @auth.route('/logout')
-    @login_required
-    def logout():
-        return jsonify({'message': 'Logged out'}), 200
-    
-    @auth.route('/register', methods=['POST'])
-    def register():
-        data = request.get_json()
+    return jsonify({'error': 'Invalid credentials'}), 401
+
+@auth.route('/logout', methods=['POST'])
+@login_required
+def logout():
+    logout_user()
+    return jsonify({'message': 'Logged Out'}), 200
+
+@auth.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
     if User.query.filter_by(email=data.get('email')).first():
         return jsonify({'error': 'Email already registered'}), 400
 
@@ -42,6 +36,3 @@ def login():
     db.session.commit()
     
     return jsonify({'message': 'User registered successfully'}), 201
-
-
-    

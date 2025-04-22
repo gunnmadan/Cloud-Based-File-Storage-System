@@ -34,6 +34,6 @@ class FileShare(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     file_id = db.Column(db.Integer, db.ForeignKey('file.id'), nullable=False)
     shared_with_email = db.Column(db.String(120), nullable=False)
-    share_link = db.Column(db.String(255), unique=True, nullable=False)
+    share_link = db.Column(db.String(512), nullable=False)
     expires_at = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

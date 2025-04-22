@@ -26,7 +26,7 @@ def create_app():
     app.register_blueprint(files_blueprint, url_prefix="/files")
 
     from .auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint, url_prefix="/auth")
+    app.register_blueprint(auth_blueprint, url_prefix="/")
 
     return app
 

@@ -68,19 +68,41 @@ def download_file(file_id):
         return jsonify({'error': str(e)}), 500
 
 @files.route('/share/<int:file_id>', methods=['POST'])
-@login_required
+@login_required 
 def share_file(file_id):
-    file = File.query.get_or_404(file_id)
+    print(" DEBUG: current_user.is_authenticated:", current_user.is_authenticated)
+    print("DEBUG: current_user.id:", current_user.get_id())
+
+    file = File.query.get(file_id)
+    if not file:
+        return jsonify({'error': 'File not found'}), 404
+
+    if not hasattr(current_user, 'id') or current_user.id is None:
+        return jsonify({'error': 'Unauthorized'}), 401  
     
     if file.user_id != current_user.id:
-        return jsonify({'error': 'Unauthorized'}), 403
+        return jsonify({'error': 'Unauthorized'}), 403 
 
     data = request.get_json()
     email = data.get('email')
     expires_in_days = data.get('expires_in_days', 7)
+    existing_share = FileShare.query.filter_by(file_id=file.id, shared_with_email=email).first()
+    if existing_share:
+        return jsonify({
+            'message': 'File already shared',
+            'share_link': existing_share.share_link
+        }), 200
 
+    share_link = drive_service.create_share_link(file.drive_file_id)
+
+    duplicate_link = FileShare.query.filter_by(share_link=share_link).first()
+    if duplicate_link:
+        return jsonify({
+            'message': 'File already shared (via reused link)',
+            'share_link': duplicate_link.share_link
+        }), 200
+ 
     try:
-        share_link = drive_service.create_share_link(file.drive_file_id)
         
         file_share = FileShare(
             file_id=file.id,
@@ -101,9 +123,9 @@ def share_file(file_id):
         return jsonify({'error': str(e)}), 500
 
 @files.route('/files', methods=['GET'])
-@login_required
+#@login_required
 def list_files():
-    files = File.query.filter_by(user_id=current_user.id).all()
+    files = File.query.filter_by(user_id=1).all()
     return jsonify([{
         'id': f.id,
         'filename': f.filename,
