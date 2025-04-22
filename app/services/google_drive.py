@@ -1,6 +1,9 @@
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
+<<<<<<< HEAD
 from google_auth_oauthlib.flow import InstalledAppFlow
+=======
+>>>>>>> miracle/main
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
 import io
@@ -13,6 +16,7 @@ class GoogleDriveService:
         self._init_service()
 
     def _init_service(self):
+<<<<<<< HEAD
         flow = InstalledAppFlow.from_client_secrets_file(
             self.credentials_path, self.SCOPES
         )
@@ -20,6 +24,9 @@ class GoogleDriveService:
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
 
+=======
+        creds = Credentials.from_authorized_user_file(self.credentials_path, self.SCOPES)
+>>>>>>> miracle/main
         self.service = build('drive', 'v3', credentials=creds)
 
     def upload_file(self, file_content, filename, mime_type):
