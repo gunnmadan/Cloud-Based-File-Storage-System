@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Share File</title>
+</head>
+<body>
+    <h2>Share "{{ file.filename }}"</h2>
+    <form method="POST">
+        <label for="email">Share with (Email):</label><br>
+        <input type="email" name="email" required><br><br>
+
+        <label for="expires_in_days">Expires in (days):</label><br>
+        <input type="number" name="expires_in_days" value="7" min="1"><br><br>
+
+        <button type="submit">Share</button>
+    </form>
+    {% if message %}
+        <p style="color:green;">{{ message }}</p>
+    {% elif error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+
+    <br><a href="{{ url_for('files.list_files') }}">← Back to File List</a>
+</body>
+</html>
+

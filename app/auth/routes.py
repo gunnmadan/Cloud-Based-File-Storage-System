@@ -4,15 +4,34 @@ from ..models import User, db
 
 auth = Blueprint('auth', __name__)
 
-@auth.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    user = User.query.filter_by(username="user1").first()
+from flask import render_template, request, redirect, url_for
 
-    if user is not None and user.check_password(data.get('password')):
+@auth.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')  
+    
+    if request.is_json:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+    else:
+        
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+    user = User.query.filter_by(email=email).first()
+    
+    if user and user.check_password(password):
         login_user(user)
-        return jsonify({'message': 'Logged in successfully'}), 200
-    return jsonify({'error': 'Invalid credentials'}), 401
+        if request.is_json:
+            return jsonify({'message': 'Logged in successfully'}), 200
+        return redirect(url_for('files.list_files'))  
+
+    if request.is_json:
+        return jsonify({'error': 'Invalid credentials'}), 401
+    return render_template('login.html', error='Invalid credentials')
+
 
 @auth.route('/logout', methods=['POST'])
 @login_required

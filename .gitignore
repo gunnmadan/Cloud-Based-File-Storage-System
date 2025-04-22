@@ -2,3 +2,4 @@ client_secret_*.json
 client_secret_*.json
 client_secrets.json
 credentials.json
+token.json
